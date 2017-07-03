@@ -27,7 +27,9 @@ $image = apply_filters( 'wpsc_merchant_image', '', $nzshpcrt_gateways[$num]['int
 if ( ! empty( $image ) ) {
 	$nzshpcrt_gateways[$num]['image'] = $image;
 }
-
+if (! class_exists('__VadsApi')) {
+	require_once(dirname(__FILE__) . '/__vads-includes/__VadsApi.php');
+}
 
 
 class wpsc_merchant___vads extends wpsc_merchant {
@@ -97,14 +99,7 @@ function form___vads() {
                          <td valign='top'>Certificat en mode production</td>
                          <td><input type='text' name='__vads_key_prod' value='". (get_option( '__vads_key_prod' ) ? get_option( '__vads_key_prod' ) :  '###KEY_PROD###')."' required><br> <i>Certificat fourni par payzen pour le mode production</i></td>
                      </tr>
-                     <tr>
-                         <td valign='top'>Mode</td>
-                         <td><select name='__vads_ctx_mode' size='1' required> 
-                                 <Option>Test</Option>
-                                 <Option>Production</Option> 
-                             </select><br><i>Mode de fonctionnement du module</i>
-                         </td>
-                     </tr>
+                    
                      <tr>
                          <td valign='top'>URL de la page de paiement </td>
                          <td><input type='text' name='__vads_platform_url' value='". (get_option( '__vads_platform_url' ) ? get_option( '__vads_platform_url' ) :  '###GATEWAY###')."' required style='width:400px'><br> <i>Certificat fourni par payzen pour le mode production</i></td>
@@ -123,13 +118,13 @@ function form___vads() {
                     <tr>
                         <td valign='top'>Langue par défaut</td>
                         <td> 
-                            <select name='data[payment][payment_params][__vads_language]' class='inputbox' id='__vads_language' style='width: 122px;' >
-                            <?php
+                            <select name='data[payment][payment_params][__vads_language]' class='inputbox' id='__vads_language' style='width: 122px;' >";
+                            
                             foreach (__VadsApi::getSupportedLanguages() as $code => $label) {
-                                $selected = (@$params->__vads_language == $code) ? ' selected=".selected."' : '';
-                                echo '<option' . $selected . ' value=". $code . ">' . JText::_('__VADS_LANGUAGE_' . strtoupper($label)) . '</option>';
+                            	$selected = get_option('__vads_language'== $code)? ' selected=".selected."' : '';
+                                $output.='<option' . $selected . ' value=". $code . ">' . $label . '</option>';
                             }
-                            ?>
+                            "
                         </select> <br> <i>Sélectionner la langue par défaut à utiliser sur la page de paiement</i>
                         </td>
                     </tr>
@@ -138,20 +133,20 @@ function form___vads() {
                         <td valign='top'>Langue disponibles</td>
                                 
                         <td height=100px> 
-                           <select name='data[payment][payment_params][__vads_language]' class='inputbox' id='__vads_language' style='width: 122px;' >
-                            <?php
+                             <select name='data[payment][payment_params][__vads_language]' class='inputbox' id='__vads_language' style='width: 122px;' >";
+                            
                             foreach (__VadsApi::getSupportedLanguages() as $code => $label) {
-                                $selected = (@$params->__vads_language == $code) ? ' selected=".selected."' : '';
-                                echo '<option' . $selected . ' value=". $code . ">' . JText::_('__VADS_LANGUAGE_' . strtoupper($label)) . '</option>';
+                            	$selected = get_option('__vads_language'== $code)? ' selected=".selected."' : '';
+                                $output.='<option' . $selected . ' value=". $code . ">' . $label . '</option>';
                             }
-                            ?>
+                            "
                         </select> <br> <i>Sélectionner les langues à proposer sur la page de paiement </i>
                         </td>
                     </tr>
                     
                     <tr> 
                         <td valign='top'>Délai avant remise en banque</td> 
-                        <td> <input type='txt' name='__vads_capture_delay'> <br> <i>Le nombre de jours avant la remise en banque(paramétrable sur votre BAckOffice PayZen</i></td>
+                        <td> <input type='text' name='__vads_capture_delay'> <br> <i>Le nombre de jours avant la remise en banque(paramétrable sur votre BAckOffice PayZen</i></td>
                     </tr>
                     
                     <tr>
@@ -194,13 +189,13 @@ function form___vads() {
                     <tr>
                         <td valign='top'>Message avant redirection (succés)</td>
                         <td> <input type='text' name='__vads_redirect_success_message' value='". (get_option( '__vads_redirect_success_message' ) ? get_option( '__vads_redirect_success_message' ) :  '###SUCCESS_MSG###')."' style='width:400px;' > 
-                             <select name='data[payment][payment_params][__vads_language]' class='inputbox' id='__vads_language' style='width: 122px;' >
-                            <?php
+                              <select name='data[payment][payment_params][__vads_language]' class='inputbox' id='__vads_language' style='width: 122px;' >";
+                            
                             foreach (__VadsApi::getSupportedLanguages() as $code => $label) {
-                                $selected = (@$params->__vads_language == $code) ? ' selected=".selected."' : '';
-                                echo '<option' . $selected . ' value=". $code . ">' . JText::_('__VADS_LANGUAGE_' . strtoupper($label)) . '</option>';
+                            	$selected = get_option('__vads_language'== $code)? ' selected=".selected."' : '';
+                                $output.='<option' . $selected . ' value=". $code . ">' . $label . '</option>';
                             }
-                            ?>
+                            "
                         </select> <br> <i>Message affiché sur la page de paiement avant rediretion lorsque le paiement a réussi.</i></td>
                     </tr>
                     
@@ -212,13 +207,13 @@ function form___vads() {
                     <tr>
                         <td valign='top'>Message avant redirection (échec)</td>
                         <td> <input type='text' name='__vads_redirect_error_message' value='". (get_option( '__vads_redirect_error_message' ) ? get_option( '__vads_redirect_error_message' ) :  '###ERROR_MSG###')."' style='width:400px;'> 
-                           <select name='data[payment][payment_params][__vads_language]' class='inputbox' id='__vads_language' style='width: 122px;' >
-                            <?php
+                           <select name='data[payment][payment_params][__vads_language]' class='inputbox' id='__vads_language' style='width: 122px;' >";
+                            
                             foreach (__VadsApi::getSupportedLanguages() as $code => $label) {
-                                $selected = (@$params->__vads_language == $code) ? ' selected=".selected."' : '';
-                                echo '<option' . $selected . ' value=". $code . ">' . JText::_('__VADS_LANGUAGE_' . strtoupper($label)) . '</option>';
+                            	$selected = get_option('__vads_language'== $code)? ' selected=".selected."' : '';
+                                $output.='<option' . $selected . ' value=". $code . ">' . $label . '</option>';
                             }
-                            ?>
+                            "
                         </select><br /><br> <i>Message affiché sur la page de paiement avant rediretion lorsque le paiement a échoué.</i></td>
                     </tr>
                     
