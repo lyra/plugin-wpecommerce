@@ -1,0 +1,6 @@
+.project
+.buildpath
+local.properties
+/archives/
+/build/
+/.settings/
