@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="wpecommerce" default="deploy">
-	<!-- contrib specific properties -->
-	<property name="build_root.dir" location=".."/>
-	<property name="common.dir" location="${build_root.dir}/common"/>
+    <!-- contrib specific properties -->
+    <property name="build_root.dir" location=".."/>
+    <property name="common.dir" location="${build_root.dir}/common"/>
 
-	<!-- standard targets and properties -->
-	<import file="${common.dir}/build-generic.xml"/>
+    <!-- standard targets and properties -->
+    <import file="${common.dir}/build-generic.xml"/>
 </project>
