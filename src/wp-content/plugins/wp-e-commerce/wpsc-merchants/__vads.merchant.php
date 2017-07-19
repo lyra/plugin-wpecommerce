@@ -37,98 +37,92 @@ class wpsc_merchant___vads extends wpsc_merchant
 
     function submit()
     {
-    	echo '<pre>' . print_r($this->cart_data, true) . '</pre>';
+        echo '<pre>' . print_r($this->cart_data, true) . '</pre>';
         die();
-        parent::onAfterOrderConfirm($order, $methods, $method_id);
-        
+
         // process shop language
         $lang = get_locale() ? substr(get_locale(), 0, 2) : null;
-        $__vadsLanguage = __VadsApi::isSupportedLanguage($lang) ? $lang : get_option('__vads_language');
-        
+        $__vads_language = __VadsApi::isSupportedLanguage($lang) ? $lang : get_option('__vads_language');
+
         // process currency
-        $__vadsCurrency = __VadsApi::findCurrencyByAlphaCode($this->cart_data['store_currency']);
-        
+        $__vads_currency = __VadsApi::findCurrencyByAlphaCode($this->cart_data['store_currency']);
+
         // amount
         $amount = $this->cart_data['total_price'];
-        
+
         // 3-DS activation according to amount
-        $threedsMpi = null;
-        if (! empty(get_option('__vads_3ds_min_amount') && $amount < get_option('__vads_3ds_min_amount'))) {
-        	$threedsMpi = '2';
+        $threeds_mpi = null;
+        if (! empty(get_option('__vads_3ds_min_amount')) && $amount < get_option('__vads_3ds_min_amount')) {
+            $threeds_mpi = '2';
         }
-        
+
         // effective used version
         include ABSPATH . WPINC . '/version.php';
         $version = $wp_version . '-' . WPSC_VERSION;
-       
-        		$data= array(
-        				'amount' => $__vadsCurrency->convertAmountToInteger($amount),
-        				'contrib' => '###CONTRIB_PARAM###/' . $version . '/' . PHP_VERSION,
-        				'currency' => $__vadsCurrency->getNum(),
-        				'language' => $__vadsLanguage,
-        				//TODO 'order_id' => $order->order_number,
-        				'threeds_mpi' => $threedsMpi,
-        				
-        				//TODO 'cust_id' => $this->user->user_id,
-        				'cust_email' => $this->cart_data['email_address'],
-        				
-        				'cust_first_name' => $this->cart_data['first_name'],
-        				'cust_last_name' => $this->cart_data['last_name'],
-        				'cust_address' => $this->cart_data['address'],
-        				'cust_zip' => $this->cart_data['post_code'],
-        				'cust_city' => $this->cart_data['city'],
-        				'cust_state' => $this->cart_data['state'],
-        				'cust_country' => $this->cart_data['country'],
-        				'cust_phone' => $this->cart_data['phone'],
-        				
-        				'ship_to_first_name' => $this->cart_data['first_name'],
-        				'ship_to_last_name' => $this->cart_data['last_name'],
-        				'ship_to_street' => $this->cart_data['address'],
-        				//TODO 'ship_to_street2' => @$order->cart->shipping_address->address_street2,
-        				'ship_to_city' => $this->cart_data['city'],
-        				'ship_to_state' => $this->cart_data['state'],
-        				'ship_to_country' => $this->cart_data['country'],
-        				//TODO 'ship_to_phone_num' => @$order->cart->shipping_address->address_telephone,
-        				'ship_to_zip' => $this->cart_data['post_code'],
-        				
-        				'url_return' => add_query_arg('sessionid', $this->cart_data['session_id'], $this->cart_data['transaction_results_url']),
-        				
-        				
-        		'url_cancel' => add_query_arg('sessionid', $this->cart_data['session_id'], $this->cart_data['shopping_cart_url'])
-        				
-        		);
-       
-  
 
-   $params = array(
-   		'site_id',
-   		'key_test',
-   		'key_prod',
-   		'ctx_mode',
-   		'platform_url',
-   		'available_languages',
-   		'capture_delay',
-   		'validation_mode',
-   		'payment_cards',
-   		'redirect_enabled',
-   		'redirect_success_timeout',
-   		'redirect_success_message',
-   		'redirect_error_timeout',
-   		'redirect_error_message',
-   		'return_mode'
-   );
-   foreach ($params as $param) {
-   	$data[$param] = get_option('__vads_' . $param);
-   }
-  
-   require_once(dirname(__FILE__) . '/__vads-includes/__VadsRequest.php');
-   $request = new __VadsRequest();
-   $request->setFromArray($data);
-   
-   echo $request->getRequestHtmlForm();
-   exit;
+        $data = array(
+            'amount' => $__vads_currency->convertAmountToInteger($amount),
+            'contrib' => '###CONTRIB_PARAM###/' . $version . '/' . PHP_VERSION,
+            'currency' => $__vads_currency->getNum(),
+            'language' => $__vads_language,
+            //TODO 'order_id' => $order->order_number,
+            'threeds_mpi' => $threeds_mpi,
+
+            //TODO 'cust_id' => $this->user->user_id,
+            'cust_email' => $this->cart_data['email_address'],
+
+            'cust_first_name' => $this->cart_data['first_name'],
+            'cust_last_name' => $this->cart_data['last_name'],
+            'cust_address' => $this->cart_data['address'],
+            'cust_zip' => $this->cart_data['post_code'],
+            'cust_city' => $this->cart_data['city'],
+            'cust_state' => $this->cart_data['state'],
+            'cust_country' => $this->cart_data['country'],
+            'cust_phone' => $this->cart_data['phone'],
+
+            'ship_to_first_name' => $this->cart_data['first_name'],
+            'ship_to_last_name' => $this->cart_data['last_name'],
+            'ship_to_street' => $this->cart_data['address'],
+            'ship_to_city' => $this->cart_data['city'],
+            'ship_to_state' => $this->cart_data['state'],
+            'ship_to_country' => $this->cart_data['country'],
+            'ship_to_zip' => $this->cart_data['post_code'],
+
+            'url_return' => add_query_arg('sessionid', $this->cart_data['session_id'], $this->cart_data['transaction_results_url']),
+            'url_cancel' => add_query_arg('sessionid', $this->cart_data['session_id'], $this->cart_data['shopping_cart_url'])
+        );
+
+         $params = array(
+             'site_id',
+             'key_test',
+             'key_prod',
+             'ctx_mode',
+             'platform_url',
+             'available_languages',
+             'capture_delay',
+             'validation_mode',
+             'payment_cards',
+             'redirect_enabled',
+             'redirect_success_timeout',
+             'redirect_success_message',
+             'redirect_error_timeout',
+             'redirect_error_message',
+             'return_mode'
+         );
+
+        foreach ($params as $param) {
+            $data[$param] = get_option('__vads_' . $param);
+        }
+
+        require_once(dirname(__FILE__) . '/__vads-includes/__VadsRequest.php');
+        $request = new __VadsRequest();
+        $request->setFromArray($data);
+
+        echo $request->getRequestHtmlForm();
+        exit;
     }
-    
+}
+
 function form___vads()
 {
     $output = '
@@ -335,8 +329,6 @@ function _wpsc_filter_notest_merchant_customer_notification_raw_message($message
 
     return $message;
 }
-      
-}    
 
 add_filter(
     'wpsc_purchase_log_customer_notification_raw_message',
@@ -344,7 +336,7 @@ add_filter(
     10,
     2
 );
-   
+
 
 
 add_filter(
@@ -353,4 +345,3 @@ add_filter(
     10,
     2
 );
-  
